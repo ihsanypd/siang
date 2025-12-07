@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Undangan Pernikahan Digital - Bilal & Fia</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;500&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6ec1e4;
+            --secondary: #a4d2a0;
+            --accent: #f7d34e;
+            --light: #f9f9f9;
+            --dark: #2c2c2c;
+            --gray: #7f8c8d;
+            --white: #f6f4eb;
+            --light-gray: #ecf0f1;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            overflow-x: hidden;
+            background-color: var(--light);
+            scroll-behavior: smooth;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .section {
+            padding: 80px 0;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--primary);
+            position: relative;
+        }
+
+        .section-title:after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 2px;
+            background: var(--accent);
+            margin: 15px auto;
+        }
+
+        /* Cover Section */
+        .cover {
+            height: 100vh;
+            background: linear-gradient(#6ec1e480, #7f8c8d4d),  
+                        url('Wallpaper clouds_.jpg') center/cover no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--white);
+            position: relative;
+        }
+
+        .cover-content {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: zoomIn 1s ease-out;
+        }
+
+        .cover-content:hover {
+            transform: translateY(-5px);
+        }
+
+        .cover-content .title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--white);
+        }
+
+        .couple-names {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .couple-names h2 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3rem;
+            color: var(--white);
+        }
+
+        .couple-names span {
+            font-size: 2rem;
+            color: var(--accent);
+        }
+
+        .date {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: var(--white);
+        }
+
+        .open-btn {
+            background-color: transparent;
+            color: var(--white);
+            border: 2px solid var(--accent);
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .open-btn:hover {
+            background-color: var(--accent);
+            color: var(--dark);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 70vh;
+            background: linear-gradient(#6ec1e480, #7f8c8d4d), 
+                        url('download.jpg') center/cover no-repeat fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--white);
+            position: relative;
+        }
+
+        .hero-content h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: fadeInDown 1s ease-out;
+            color: var(--white);
+        }
+
+        .hero-content p {
+            font-size: 1.5rem;
+            margin-bottom: 40px;
+            animation: fadeInUp 1s ease-out 0.5s both;
+            color: var(--white);
+        }
+
+        .scroll-indicator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            animation: bounce 2s infinite;
+            color: var(--white);
+        }
+
+        /* Main Content */
+        .main-content {
+            background-color: var(--light);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Welcome Section */
+        .welcome {
+            text-align: center;
+            background-color: var(--white);
+            padding: 60px 20px;
+        }
+
+        .welcome p {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            color: var(--dark);
+            line-height: 1.8;
+        }
+
+        .welcome .ayat {
+            font-family: 'Traditional Arabic', serif;
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin: 30px 0;
+            direction: rtl;
+        }
+
+        /* Couple Section */
+        .couple {
+            background: linear-gradient( 135deg, #6ec1e44d 0%, #2c2c2c80 100%),
+                        url("download (1).jpg") center/cover no-repeat fixed;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .couple:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="white" opacity="0.1"/></svg>');
+        }
+
+        .couple-profile {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .bride, .groom {
+            text-align: center;
+            flex: 1;
+            min-width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bride:before, .groom:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+        }
+
+        .bride:hover, .groom:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .profile-icon {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            border: 5px solid var(--accent);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .profile-icon:hover {
+            transform: scale(1.05);
+        }
+
+        .profile-icon.male {
+            background-image: url('WhatsApp Image 2025-11-23 at 15.45.12 (1).jpeg');
+        }
+
+        .profile-icon.female {
+            background-image: url('WhatsApp Image 2025-11-23 at 16.42.54.jpeg');
+        }
+
+        .profile-icon i {
+            position: absolute;
+            bottom: -10px;
+            right: -10px;
+            background: var(--accent);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dark);
+            font-size: 1.5rem;
+            border: 3px solid var(--white);
+        }
+
+        .bride h3, .groom h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+
+        .bride p, .groom p {
+            color: var(--dark);
+            line-height: 1.8;
+        }
+
+        /* Event Section */
+        .event {
+            background-color: var(--white);
+            position: relative;
+        }
+
+        .event-details {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .single-location {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 40px;
+            background: var(--light-gray);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .single-location:hover {
+            transform: translateY(-5px);
+        }
+
+        .single-location .location-name {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            font-family: 'Dancing Script', cursive;
+        }
+
+        .event-item {
+            background: var(--light-gray);
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            flex: 1;
+            min-width: 250px;
+            transition: transform 0.3s ease;
+        }
+
+        .event-item:hover {
+            transform: translateY(-10px);
+        }
+
+        .event-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        /* Calendar Button */
+        .calendar-btn-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .calendar-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            text-decoration: none;
+            box-shadow: 0 5px 15px rgba(110, 193, 228, 0.3);
+        }
+
+        .calendar-btn:hover {
+            background-color: var(--secondary);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(110, 193, 228, 0.4);
+        }
+
+        /* Map Section */
+        .map-container {
+            margin-top: 50px;
+        }
+
+        .map-wrapper {
+            height: 400px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+
+        /* Countdown Section */
+        .countdown {
+            background: linear-gradient( 135deg, #6ec1e480 0%, #a4d2a04d 100%),
+                        url("download (2).jpg") center/cover no-repeat fixed;
+            color: var(--white);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .countdown:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></svg>');
+        }
+
+        .countdown .section-title {
+            color: var(--white);
+            position: relative;
+            z-index: 1;
+        }
+
+        .countdown .section-title:after {
+            background: var(--accent);
+        }
+
+        .countdown-timer {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        .countdown-item {
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px 20px;
+            border-radius: 15px;
+            min-width: 120px;
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .countdown-item:hover {
+            transform: scale(1.05);
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .countdown-item span {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--accent);
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .countdown-item p {
+            color: var(--white);
+            font-size: 1.1rem;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--primary);
+            color: var(--white);
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .footer p {
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+
+        .footer .families {
+            margin-top: 30px;
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        /* Music Toggle */
+        .music-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .music-toggle:hover {
+            background-color: var(--secondary);
+            transform: scale(1.1);
+        }
+
+        .music-toggle.playing {
+            background-color: var(--accent);
+            color: var(--dark);
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            z-index: 1001;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .notification.success {
+            background-color: rgba(46, 204, 113, 0.9);
+        }
+
+        .notification.error {
+            background-color: rgba(231, 76, 60, 0.9);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        /* Loading Animation */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--light-gray);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from { 
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        @keyframes zoomIn {
+            from { 
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to { 
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-100px) rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .section {
+                padding: 60px 0;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .cover-content .title {
+                font-size: 2.2rem;
+            }
+            
+            .couple-names {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .couple-names h2 {
+                font-size: 2.2rem;
+            }
+            
+            .couple-names span {
+                font-size: 1.5rem;
+            }
+            
+            .couple-profile {
+                flex-direction: column;
+                gap: 30px;
+            }
+            
+            .bride, .groom {
+                min-width: 100%;
+            }
+            
+            .countdown-item {
+                min-width: 70px;
+                padding: 20px 15px;
+            }
+            
+            .countdown-item span {
+                font-size: 2rem;
+            }
+            
+            .hero-content h1 {
+                font-size: 2.8rem;
+            }
+            
+            .hero-content p {
+                font-size: 1.2rem;
+            }
+            
+            .profile-icon {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .map-wrapper {
+                height: 300px;
+            }
+            
+            .single-location {
+                padding: 30px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cover-content {
+                padding: 30px 20px;
+                margin: 20px;
+            }
+            
+            .open-btn {
+                padding: 10px 25px;
+                font-size: 1rem;
+            }
+            
+            .hero {
+                height: 60vh;
+            }
+            
+            .event-item {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Cover Section -->
+    <section id="cover" class="cover">
+        <div class="cover-content">
+            <h1 class="title">Undangan Pernikahan</h1>
+            <div class="couple-names">
+                <h2>Fia</h2>
+                <span>&</span>
+                <h2>Bilal</h2>
+            </div>
+            <p class="date">Kamis, 25 Desember 2025</p>
+            <button id="open-invitation" class="open-btn">Buka Undangan</button>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main id="main-content" class="main-content hidden">
+        <!-- Hero Section -->
+        <section id="hero" class="hero">
+            <div class="hero-content">
+                <h1>Fia & Bilal</h1>
+                <div class="scroll-indicator">
+                    <span>Scroll untuk melihat lebih lanjut</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- Welcome Section -->
+        <section id="welcome" class="section welcome">
+            <div class="container">
+                <h2 class="section-title">Assalamu'alaikum Warahmatullahi Wabarakatuh</h2>
+                <p>Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud mengundang Bapak/Ibu/Saudara/i untuk hadir dalam acara pernikahan kami. Kehadiran dan doa restu dari Anda sekalian merupakan kebahagiaan yang tak ternilai bagi kami.</p>
+            </div>
+        </section>
+
+        <!-- Couple Section -->
+        <section id="couple" class="section couple">
+            <div class="container">
+                <h2 class="section-title">Mempelai</h2>
+                <div class="couple-profile">
+                    <div class="bride">
+                        <div class="profile-icon female">
+                        </div>
+                        <h3>apt. Luthfiannisa Khodijah, S.Farm</h3>
+                        <p>Putri pertama dari Bapak Sartono & Ibu Romlah</p>
+                    </div>
+                    <div class="groom">
+                        <div class="profile-icon male">
+                        </div>
+                        <h3>John Hasan Bilal, S.Ars</h3>
+                        <p>Putra terakhir dari Bapak Alex Leonard Mailangkay (alm) & Ibu Asmawaty</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Event Details -->
+        <section id="event" class="section event">
+            <div class="container">
+                <h2 class="section-title">Detail Acara</h2>
+                
+                <!-- Single Location Info -->
+                <div class="single-location">
+                    <p class="location-name">Waktu & Tempat</p>
+                    <div class="event-item">
+                        <div class="date">Kamis, 25 Desember 2025</div>
+                        <div class="time">14.00 - 16.00 WIB</div>
+                        <div class="location">Kediaman mempelai wanita</div>
+                        <div class="address">Jl. Kalisari Raya, No. 14U RT 06/02, Kalisari, Pasar Rebo, Jakarta Timur</div>
+                    </div>
+                    
+                    <!-- Calendar Button -->
+                    <div class="calendar-btn-container">
+                        <a id="calendar-btn" class="calendar-btn" target="_blank">
+                            <i class="far fa-calendar-alt"></i>
+                            Simpan di Kalender
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Map -->
+            <div class="container map-container">
+                <div class="map-wrapper">
+                    <div id="map"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Countdown -->
+        <section id="countdown" class="section countdown">
+            <div class="container">
+                <h2 class="section-title">Hitungan Mundur</h2>
+                <div class="countdown-timer">
+                    <div class="countdown-item">
+                        <span id="days">00</span>
+                        <p>Hari</p>
+                    </div>
+                    <div class="countdown-item">
+                        <span id="hours">00</span>
+                        <p>Jam</p>
+                    </div>
+                    <div class="countdown-item">
+                        <span id="minutes">00</span>
+                        <p>Menit</p>
+                    </div>
+                    <div class="countdown-item">
+                        <span id="seconds">00</span>
+                        <p>Detik</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <p>Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.</p>
+                <p>Atas kehadiran dan doa restunya, kami mengucapkan terima kasih.</p>
+
+                <p style="margin-top: 30px; font-size: 0.9rem; opacity: 0.7;">
+                    Keluarga Bapak Sartono <br>
+                    Keluarga Bapak Alex L. Mailangkay (alm) & Ibu Asmawaty <br>
+                    Kedua mempelai
+                </p>
+            </div>
+        </footer>
+    </main>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <!-- Audio Player -->
+    <audio id="wedding-music" loop preload="auto">
+        <source src="Elvis Presley - Can't Help Falling In Love (Official Audio).mp3" type="audio/mpeg">
+    </audio>
+    
+    <button id="music-toggle" class="music-toggle">
+        <i class="fas fa-volume-up"></i>
+    </button>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const coverSection = document.getElementById('cover');
+            const mainContent = document.getElementById('main-content');
+            const openButton = document.getElementById('open-invitation');
+            const musicToggle = document.getElementById('music-toggle');
+            const weddingMusic = document.getElementById('wedding-music');
+            const calendarBtn = document.getElementById('calendar-btn');
+            const loading = document.getElementById('loading');
+            
+            // Countdown elements
+            const daysElement = document.getElementById('days');
+            const hoursElement = document.getElementById('hours');
+            const minutesElement = document.getElementById('minutes');
+            const secondsElement = document.getElementById('seconds');
+            
+            // Hide loading after 1.5 seconds
+            setTimeout(() => {
+                loading.classList.add('hidden');
+            }, 1500);
+            
+            // Wedding date (December 25, 2025 13:00 WIB)
+            const weddingDate = new Date('2025-12-25T14:00:00+07:00').getTime();
+            
+            // Single location data
+            const location = {
+                name: "Kediaman Mempelai Wanita",
+                address: "Jl. Kalisari Raya, No. 14U RT 06/02, Kalisari, Pasar Rebo, Jakarta Timur",
+                lat: -6.3363,
+                lng: 106.8545
+            };
+
+            // Initialize map
+            let map;
+            
+            function initMap() {
+                // Initialize map
+                map = L.map('map').setView([location.lat, location.lng], 15);
+                
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors',
+                    maxZoom: 19
+                }).addTo(map);
+                
+                // Custom icon
+                const weddingIcon = L.divIcon({
+                    html: '<i class="fas fa-heart" style="color: #e74c3c; font-size: 24px;"></i>',
+                    iconSize: [30, 30],
+                    className: 'wedding-marker'
+                });
+                
+                // Add marker
+                L.marker([location.lat, location.lng], {icon: weddingIcon})
+                    .addTo(map)
+                    .bindPopup(`
+                        <div style="text-align: center;">
+                            <h3 style="margin: 0 0 10px 0; color: #6ec1e4;">${location.name}</h3>
+                            <p style="margin: 0; color: #666;">${location.address}</p>
+                            <a href="https://www.google.com/maps/dir/?api=1&destination=${location.lat},${location.lng}" 
+                               target="_blank" 
+                               style="display: inline-block; margin-top: 10px; padding: 5px 15px; background: #6ec1e4; color: white; text-decoration: none; border-radius: 5px;">
+                                <i class="fas fa-directions"></i> Petunjuk Arah
+                            </a>
+                        </div>
+                    `)
+                    .openPopup();
+            }
+            
+            // Generate Google Calendar link
+            function generateCalendarLink() {
+                const eventTitle = "Pernikahan Bilal & Fia";
+                const eventDescription = `Pernikahan Bilal & Fia
+                
+Akad Nikah & Resepsi
+Kediaman mempelai wanita
+Jl. Kalisari Raya, No. 14U RT 06/02, Kalisari, Pasar Rebo, Jakarta Timur
+
+Kami mengundang Anda untuk hadir dalam acara pernikahan kami.
+Kehadiran dan doa restu Anda sangat berarti bagi kami.`;
+
+                const startDate = new Date('2025-12-25T14:00:00+07:00');
+                const endDate = new Date('2025-12-25T16:00:00+07:00');
+                
+                const startISO = startDate.toISOString().replace(/-|:|\.\d+/g, '');
+                const endISO = endDate.toISOString().replace(/-|:|\.\d+/g, '');
+                
+                const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE` +
+                    `&text=${encodeURIComponent(eventTitle)}` +
+                    `&dates=${startISO}/${endISO}` +
+                    `&details=${encodeURIComponent(eventDescription)}` +
+                    `&location=${encodeURIComponent(location.address)}` +
+                    `&ctz=Asia/Jakarta`;
+                
+                return calendarUrl;
+            }
+            
+            // Set calendar button link
+            calendarBtn.href = generateCalendarLink();
+            
+            // Open invitation
+            openButton.addEventListener('click', function() {
+                // Add loading effect
+                openButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Membuka...';
+                openButton.disabled = true;
+                
+                setTimeout(() => {
+                    coverSection.style.display = 'none';
+                    mainContent.classList.remove('hidden');
+                    
+                    // Scroll to top
+                    window.scrollTo(0, 0);
+                    
+                    // Start music (with user interaction)
+                    weddingMusic.volume = 0.3;
+                    const playPromise = weddingMusic.play();
+                    
+                    if (playPromise !== undefined) {
+                        playPromise.then(() => {
+                            isMusicPlaying = true;
+                            musicToggle.classList.add('playing');
+                            musicToggle.innerHTML = '<i class="fas fa-volume-up"></i>';
+                        }).catch(error => {
+                            console.log('Autoplay prevented:', error);
+                            showNotification('Klik tombol speaker untuk memutar musik', 'success');
+                        });
+                    }
+                    
+                    // Initialize map
+                    initMap();
+                    
+                    // Initialize scroll animations
+                    initScrollAnimations();
+                }, 800);
+            });
+            
+            // Music toggle
+            let isMusicPlaying = false;
+            
+            musicToggle.addEventListener('click', function() {
+                if (isMusicPlaying) {
+                    weddingMusic.pause();
+                    musicToggle.classList.remove('playing');
+                    musicToggle.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                    showNotification('Musik dimatikan', 'success');
+                } else {
+                    weddingMusic.play().then(() => {
+                        musicToggle.classList.add('playing');
+                        musicToggle.innerHTML = '<i class="fas fa-volume-up"></i>';
+                        showNotification('Musik dihidupkan', 'success');
+                    }).catch(error => {
+                        console.log('Play failed:', error);
+                        showNotification('Gagal memutar musik', 'error');
+                    });
+                }
+                isMusicPlaying = !isMusicPlaying;
+            });
+            
+            // Countdown timer
+            function updateCountdown() {
+                const now = new Date().getTime();
+                const timeLeft = weddingDate - now;
+                
+                if (timeLeft > 0) {
+                    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                    
+                    daysElement.textContent = days.toString().padStart(2, '0');
+                    hoursElement.textContent = hours.toString().padStart(2, '0');
+                    minutesElement.textContent = minutes.toString().padStart(2, '0');
+                    secondsElement.textContent = seconds.toString().padStart(2, '0');
+                } else {
+                    // Wedding date has passed
+                    daysElement.textContent = '00';
+                    hoursElement.textContent = '00';
+                    minutesElement.textContent = '00';
+                    secondsElement.textContent = '00';
+                    
+                    const countdownContainer = document.querySelector('.countdown-timer');
+                    if (!countdownContainer.querySelector('.past-message')) {
+                        const message = document.createElement('div');
+                        message.className = 'past-message';
+                        message.textContent = 'Acara pernikahan telah berlangsung! Terima kasih atas doa dan restunya.';
+                        message.style.cssText = `
+                            grid-column: 1 / -1;
+                            text-align: center;
+                            font-style: italic;
+                            color: var(--accent);
+                            margin-top: 20px;
+                            font-size: 1.2rem;
+                            padding: 20px;
+                            background: rgba(255, 255, 255, 0.1);
+                            border-radius: 10px;
+                            backdrop-filter: blur(10px);
+                        `;
+                        countdownContainer.appendChild(message);
+                    }
+                }
+            }
+            
+            // Update countdown every second
+            const countdownInterval = setInterval(updateCountdown, 1000);
+            updateCountdown(); // Initial call
+
+            // Show notification
+            function showNotification(message, type) {
+                const notification = document.getElementById('notification');
+                notification.textContent = message;
+                notification.className = `notification ${type}`;
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+
+            // Initialize scroll animations
+            function initScrollAnimations() {
+                const sections = document.querySelectorAll('.section');
+                
+                const observerOptions = {
+                    threshold: 0.1,
+                    rootMargin: '0px 0px -50px 0px'
+                };
+                
+                const observer = new IntersectionObserver(function(entries) {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                        }
+                    });
+                }, observerOptions);
+                
+                sections.forEach(section => {
+                    observer.observe(section);
+                });
+            }
+
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Add scroll indicator animation
+            window.addEventListener('scroll', function() {
+                const scrollIndicator = document.querySelector('.scroll-indicator');
+                if (scrollIndicator && window.scrollY > 100) {
+                    scrollIndicator.style.opacity = '0';
+                    scrollIndicator.style.transition = 'opacity 0.3s ease';
+                }
+            });
+
+            // Preload music
+            weddingMusic.load();
+
+            // Add date formatting for Indonesian locale
+            function formatIndonesianDate(date) {
+                const options = { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                };
+                return date.toLocaleDateString('id-ID', options);
+            }
+
+            // Update date displays
+            document.querySelectorAll('.date-display').forEach(element => {
+                const weddingDateObj = new Date('2025-12-25T14:00:00+07:00');
+                element.textContent = formatIndonesianDate(weddingDateObj);
+            });
+        });
+    </script>
+</body>
+</html>
